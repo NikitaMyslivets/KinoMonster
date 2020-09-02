@@ -7,6 +7,8 @@ verify_ssl = true
 httpie = "*"
 pytest = "*"
 pytest-selenium = "*"
+astpretty = "*"
+pudb = "*"
 
 [packages]
 django = "*"
