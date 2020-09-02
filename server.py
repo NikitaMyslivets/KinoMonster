@@ -19,7 +19,7 @@ class MyHttp(SimpleHTTPRequestHandler):
             "/": self.handle_root,
             "/hello/": self.handle_hello,
             "/style/": self.handle_style, 
-         #   "/img/": self.handle_logo, 
+            "/img/": self.handle_logo, 
         }
 
         try:
@@ -81,9 +81,9 @@ class MyHttp(SimpleHTTPRequestHandler):
         self.respond(css, content_type="text/css")    
 
 
-    # def handle_logo(self):
-    #     image = read_static("img/cloud.png")
-    #     self.respond(image, content_type="image/png")        
+    def handle_logo(self):
+         image = read_static("img/cloud.png")
+         self.respond(image, content_type="image/jpg")        
 
 
     def respond(self, message, code=200, content_type="text/html"):

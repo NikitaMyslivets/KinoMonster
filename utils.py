@@ -39,6 +39,19 @@ def read_static(path: str) -> bytes:
     return result		
 
 
+def get_content_type(file_path: str) -> str:
+    """
+    Calculates content-type against given path. Default is "text/html"
+    :param file_path: hypothetical path to file
+    :return: content-type value
+    """
+
+    if not file_path:
+        return "text/html"
+    content_type, _ = mimetypes.guess_type(file_path)
+    return content_type    
+
+
 def get_name_from_qs(qs: str) -> str:
 	if not qs:
 		return 'world'
