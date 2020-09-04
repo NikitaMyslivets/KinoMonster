@@ -4,12 +4,12 @@ from http.server import SimpleHTTPRequestHandler
 import settings
 from custom_types import Endpoint
 #from errors import MethodNotAllowed
+from datetime import datetime
 from errors import NotFound
-from utils import normalize_path
 from utils import read_static
 from utils import to_bytes
 from utils import get_content_type
-from utils import get_name_from_qs
+from utils import get_user_data
 
 
 class MyHttp(SimpleHTTPRequestHandler):
@@ -24,7 +24,7 @@ class MyHttp(SimpleHTTPRequestHandler):
             #"/img/": self.handle_logo,
             #"/films/": self.handle_films,
             '/': [self.handle_static, ['index.html', 'text/html']],
-            '/hello/': [self.handle_hello, []],
+            '/hello/': [self.handle_hello, [endpoint]],
             '/img/': [self.handle_static, [f'img/{endpoint.file_name}', content_type]],
             '/style/': [self.handle_static, [f'styles/{endpoint.file_name}', content_type]],
             '/films/': [self.handle_static, [f'films.html', content_type]],
@@ -49,7 +49,11 @@ class MyHttp(SimpleHTTPRequestHandler):
     def handle_root(self):
         return super().do_GET()
 
-    def handle_hello(self):
+    def handle_hello(self, endpoint):
+        user = get_user_data(endpoint.query_string)
+        year = datetime.now().year - user.age
+
+
         content = f"""
         <html>
         <head>
@@ -58,16 +62,18 @@ class MyHttp(SimpleHTTPRequestHandler):
         </head>
         <body>
 
-        <h1>Hello world!</h1>
+        <h1>Hello {user.name}!</h1>
+        <h1>You was born at {year}</h1>
         <p>path: {self.path}</p>
         
         <form>
-            <label for="xxx-id">Your name:</label>
-            <input type="text" name="xxx" id="xxx-id">
+            <label for="name-id">Your name:</label>
+            <input type="text" name="name" id="name-id" value="{user.name}">
             
-            <label for="xxx-id">Your age:</label>
-            <input type="<text></text>" name="yyy" id="yyy-id">
-            <button type="submit">OK</button>
+            <label for="age-id">Your age:</label>
+            <input type="text" name="age" id="age-id" value="{user.age}">
+
+            <button type="submit" id="greet-button-id">OK</button>
                 
         </form>
 
@@ -83,22 +89,15 @@ class MyHttp(SimpleHTTPRequestHandler):
         msg = """NOT FOUND!!!!!!!!"""
         self.respond(msg, code=404, content_type="text/plain")
 
+
     def handle_static(self, file_path, content_type):
         content = read_static(file_path)
         self.respond(content, content_type=content_type)
 
-#    def handle_style(self):
-#        css = read_static("styles/style.css")
-#        self.respond(css, content_type="text/css")
 
     def handle_films(self):
         films = read_static("films.html")
         self.respond(films, content_type="text/html")
-
-
-#    def handle_logo(self):
-#         image = read_static("img/cloud.png")
-#         self.respond(image, content_type="image/jpg")
 
 
     def respond(self, message, code=200, content_type="text/html"):
