@@ -2,29 +2,37 @@ import traceback
 from http.server import SimpleHTTPRequestHandler
 
 import settings
+from custom_types import Endpoint
 #from errors import MethodNotAllowed
 from errors import NotFound
 from utils import normalize_path
 from utils import read_static
 from utils import to_bytes
+from utils import get_content_type
 from utils import get_name_from_qs
-#from custom_types import Endpoint
 
 
 class MyHttp(SimpleHTTPRequestHandler):
     def do_GET(self):
-        path = normalize_path(self.path)
-      #  endpoint = Endpoint.from_path(self.path)
-        handlers = {
-            "/": self.handle_root,
-            "/hello/": self.handle_hello,
-            "/style/": self.handle_style, 
-            "/img/": self.handle_logo, 
+        endpoint = Endpoint.from_path(self.path)
+        content_type = get_content_type(endpoint.file_name)
+
+        endpoints = {
+            #"/": self.handle_root,
+            #"/hello/": self.handle_hello,
+            #"/style/": self.handle_style,
+            #"/img/": self.handle_logo,
+            #"/films/": self.handle_films,
+            '/': [self.handle_static, ['index.html', 'text/html']],
+            '/hello/': [self.handle_hello, []],
+            '/img/': [self.handle_static, [f'img/{endpoint.file_name}', content_type]],
+            '/style/': [self.handle_static, [f'styles/{endpoint.file_name}', content_type]],
+            '/films/': [self.handle_static, [f'films.html', content_type]],
         }
 
         try:
-            handler = handlers[path]
-            handler()
+            handler, args = endpoints[endpoint.normal]
+            handler(*args)
         except(NotFound, KeyError):
             self.handle_404()
 
@@ -56,7 +64,6 @@ class MyHttp(SimpleHTTPRequestHandler):
         <form>
             <label for="xxx-id">Your name:</label>
             <input type="text" name="xxx" id="xxx-id">
-            <button type="submit">OK</button>
             
             <label for="xxx-id">Your age:</label>
             <input type="<text></text>" name="yyy" id="yyy-id">
@@ -76,14 +83,22 @@ class MyHttp(SimpleHTTPRequestHandler):
         msg = """NOT FOUND!!!!!!!!"""
         self.respond(msg, code=404, content_type="text/plain")
 
-    def handle_style(self):
-        css = read_static("styles/style.css")
-        self.respond(css, content_type="text/css")    
+    def handle_static(self, file_path, content_type):
+        content = read_static(file_path)
+        self.respond(content, content_type=content_type)
+
+#    def handle_style(self):
+#        css = read_static("styles/style.css")
+#        self.respond(css, content_type="text/css")
+
+    def handle_films(self):
+        films = read_static("films.html")
+        self.respond(films, content_type="text/html")
 
 
-    def handle_logo(self):
-         image = read_static("img/cloud.png")
-         self.respond(image, content_type="image/jpg")        
+#    def handle_logo(self):
+#         image = read_static("img/cloud.png")
+#         self.respond(image, content_type="image/jpg")
 
 
     def respond(self, message, code=200, content_type="text/html"):
