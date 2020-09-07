@@ -3,7 +3,7 @@ from http.server import SimpleHTTPRequestHandler
 
 import settings
 from custom_types import Endpoint
-#from errors import MethodNotAllowed
+from errors import MethodNotAllowed
 from datetime import datetime
 from errors import NotFound
 from utils import read_static
@@ -25,9 +25,12 @@ class MyHttp(SimpleHTTPRequestHandler):
             #"/films/": self.handle_films,
             '/': [self.handle_static, ['index.html', 'text/html']],
             '/hello/': [self.handle_hello, [endpoint]],
-            '/img/': [self.handle_static, [f'img/{endpoint.file_name}', content_type]],
-            '/style/': [self.handle_static, [f'styles/{endpoint.file_name}', content_type]],
+            '/i/': [self.handle_static, [f'img/{endpoint.file_name}', content_type]],
+            '/s/': [self.handle_static, [f'styles/{endpoint.file_name}', content_type]],
             '/films/': [self.handle_static, [f'films.html', content_type]],
+            '/show/': [self.handle_static, [f'show.html', content_type]],
+            '/rating/': [self.handle_static, [f'rating.html', content_type]],
+            '/contact/': [self.handle_static, [f'contact.html', content_type]],
         }
 
         try:
@@ -35,30 +38,20 @@ class MyHttp(SimpleHTTPRequestHandler):
             handler(*args)
         except(NotFound, KeyError):
             self.handle_404()
+        except MethodNotAllowed:
+            self.handle_405()
+        except Exception:
+            self.handle_500()        
 
-        # if path == "/":
-        #     self.handle_root()
-        # elif path == "/hello/":
-        #     self.handle_hello()
-        # elif path == "/style/":
-        #     self.handle_style()    
-        # else:
-        #     self.handle_404()
-
-
-    def handle_root(self):
-        return super().do_GET()
 
     def handle_hello(self, endpoint):
         user = get_user_data(endpoint.query_string)
         year = datetime.now().year - user.age
 
-
         content = f"""
         <html>
         <head>
             <title>Hello Page</title>
-            <link rel="stylesheet" type="text/css" href="/style">
         </head>
         <body>
 
@@ -84,20 +77,21 @@ class MyHttp(SimpleHTTPRequestHandler):
         self.respond(content)
 
 
-
     def handle_404(self):
         msg = """NOT FOUND!!!!!!!!"""
         self.respond(msg, code=404, content_type="text/plain")
+
+    def handle_405(self):
+        self.respond("", code=405, content_type="text/plain")
+
+    def handle_500(self):
+        msg = traceback.format_exc()
+        self.respond(msg, code=500, content_type="text/plain")        
 
 
     def handle_static(self, file_path, content_type):
         content = read_static(file_path)
         self.respond(content, content_type=content_type)
-
-
-    def handle_films(self):
-        films = read_static("films.html")
-        self.respond(films, content_type="text/html")
 
 
     def respond(self, message, code=200, content_type="text/html"):
