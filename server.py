@@ -1,40 +1,45 @@
 import traceback
+from datetime import datetime
 from http.server import SimpleHTTPRequestHandler
 
-import settings
-from custom_types import Endpoint
+from consts import USERS_DATA
+from custom_types import User
+from custom_types import HttpRequest
 from errors import MethodNotAllowed
-from datetime import datetime
 from errors import NotFound
 from utils import read_static
 from utils import to_bytes
-from utils import get_content_type
-from utils import get_user_data
+from utils import to_str
 
 
 class MyHttp(SimpleHTTPRequestHandler):
     def do_GET(self):
-        endpoint = Endpoint.from_path(self.path)
-        content_type = get_content_type(endpoint.file_name)
+        self.dispatch('get')
+
+    def do_POST(self):
+        self.dispatch('post')    
+
+
+    def dispatch(self, http_method):
+        req = HttpRequest.from_path(self.path, method=http_method)
+        #endpoint = Endpoint.from_path(self.path)
+        #content_type = get_content_type(endpoint.file_name)
 
         endpoints = {
-            #"/": self.handle_root,
-            #"/hello/": self.handle_hello,
-            #"/style/": self.handle_style,
-            #"/img/": self.handle_logo,
-            #"/films/": self.handle_films,
+
             '/': [self.handle_static, ['index.html', 'text/html']],
-            '/hello/': [self.handle_hello, [endpoint]],
-            '/i/': [self.handle_static, [f'img/{endpoint.file_name}', content_type]],
-            '/s/': [self.handle_static, [f'styles/{endpoint.file_name}', content_type]],
-            '/films/': [self.handle_static, [f'films.html', content_type]],
-            '/show/': [self.handle_static, [f'show.html', content_type]],
-            '/rating/': [self.handle_static, [f'rating.html', content_type]],
-            '/contact/': [self.handle_static, [f'contact.html', content_type]],
+            '/hello/': [self.handle_hello, [req]],
+            '/hello-update/':[self.handle_hello_update, [req]],
+            '/i/': [self.handle_static, [f'img/{req.file_name}', req.content_type]],
+            '/s/': [self.handle_static, [f'styles/{req.file_name}', req.content_type]],
+            '/films/': [self.handle_static, [f'films.html', req.content_type]],
+            '/show/': [self.handle_static, [f'show.html', req.content_type]],
+            '/rating/': [self.handle_static, [f'rating.html', req.content_type]],
+            '/contact/': [self.handle_static, [f'contact.html', req.content_type]],
         }
 
         try:
-            handler, args = endpoints[endpoint.normal]
+            handler, args = endpoints[req.normal]
             handler(*args)
         except(NotFound, KeyError):
             self.handle_404()
@@ -44,8 +49,14 @@ class MyHttp(SimpleHTTPRequestHandler):
             self.handle_500()        
 
 
-    def handle_hello(self, endpoint):
-        user = get_user_data(endpoint.query_string)
+    def handle_hello(self, request: HttpRequest):
+        if request.method != "get":
+            raise MethodNotAllowed
+
+        query_string = self.load_user_data()    
+
+        user = User.from_query(query_string)
+
         year = datetime.now().year - user.age
 
         content = f"""
@@ -59,12 +70,12 @@ class MyHttp(SimpleHTTPRequestHandler):
         <h1>You was born at {year}</h1>
         <p>path: {self.path}</p>
         
-        <form>
+        <form method="post" action="/hello-update">
             <label for="name-id">Your name:</label>
-            <input type="text" name="name" id="name-id" value="{user.name}">
+            <input type="text" name="name" id="name-id">
             
             <label for="age-id">Your age:</label>
-            <input type="text" name="age" id="age-id" value="{user.age}">
+            <input type="text" name="age" id="age-id">
 
             <button type="submit" id="greet-button-id">OK</button>
                 
@@ -75,6 +86,15 @@ class MyHttp(SimpleHTTPRequestHandler):
         """
 
         self.respond(content)
+
+
+    def handle_hello_update(self, request:HttpRequest):
+        if request.method != "post":
+            raise MethodNotAllowed
+
+        qs = self.get_request_payload()
+        self.save_user_data(qs)
+        self.redirect("/hello")        
 
 
     def handle_404(self):
@@ -100,9 +120,42 @@ class MyHttp(SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-type", content_type)
         self.send_header("Content-length", str(len(payload)))
-        self.send_header("Cache-control", f"max-age={settings.CACHE_AGE}")
         self.end_headers()
         self.wfile.write(payload)
+
+    def redirect(self, to):
+        self.send_response(302)
+        self.send_header('Location', to)
+        self.end_headers()
+
+    def get_request_payload(self) -> str:
+        content_length_as_str = self.headers.get("content-length", 0)
+        content_length = int(content_length_as_str)
+
+        if not content_length:
+            return ""
+
+        payload_as_bytes = self.rfile.read(content_length)
+        payload = payload_as_bytes.decode()
+        return payload   
+
+
+    @staticmethod
+    def load_user_data() -> str:
+        if not USERS_DATA.is_file():
+            return ""
+
+        with USERS_DATA.open("r") as src:
+            content = src.read()
+
+        content = to_str(content)
+
+        return content
+
+    @staticmethod
+    def save_user_data(query: str) -> None:
+        with USERS_DATA.open("w") as dst:
+            dst.write(query)         
 
 
 

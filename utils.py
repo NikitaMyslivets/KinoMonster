@@ -1,21 +1,6 @@
-import mimetypes
 import settings
+from typing import AnyStr
 from errors import NotFound
-from custom_types import User
-
-from urllib.parse import parse_qs
-
-
-# def normalize_path(path: str) -> str:
-#     if not path:
-#         return "/"
-
-#     normalized_path = path
-
-#     if normalized_path[-1] != "/":
-#         normalized_path = f"{normalized_path}/"
-
-#     return normalized_path
 
 
 def to_bytes(text) -> bytes:
@@ -43,30 +28,19 @@ def read_static(path: str) -> bytes:
     return result		
 
 
-def get_content_type(file_path: str) -> str:
+def to_str(text: AnyStr) -> str:
     """
-    Calculates content-type against given path. Default is "text/html"
-    :param file_path: hypothetical path to file
-    :return: content-type value
+    Safely converts any string to str.
+    :param text: any string
+    :return: str
     """
 
-    if not file_path:
-        return "text/html"
-    content_type, _ = mimetypes.guess_type(file_path)
-    return content_type    
+    result = text
 
+    if not isinstance(text, (str, bytes)):
+        result = str(text)
 
+    if isinstance(result, bytes):
+        result = result.decode()
 
-def get_user_data(qs: str) -> User:
-    qp = parse_qs(qs)
-
-    default_names = ["world"]
-    default_ages = [0]
-
-    name_values = qp.get("name", default_names)
-    age_values = qp.get("age", default_ages)
-
-    name = name_values[0]
-    age = int(age_values[0])
-
-    return User(name=name, age=age)    					    		
+    return result					    		
