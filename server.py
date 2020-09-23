@@ -1,8 +1,10 @@
+import os
 import traceback
 from datetime import datetime
 from http.server import SimpleHTTPRequestHandler
 
 from consts import USERS_DATA
+from consts import NEW_USERS_DATA
 from custom_types import User
 from custom_types import HttpRequest
 from errors import MethodNotAllowed
@@ -29,6 +31,7 @@ class MyHttp(SimpleHTTPRequestHandler):
 
             '/': [self.handle_static, ['index.html', 'text/html']],
             '/hello/': [self.handle_hello, [req]],
+            '/empty/': [self.handle_empty, [req]],
             '/hello-update/':[self.handle_hello_update, [req]],
             '/i/': [self.handle_static, [f'img/{req.file_name}', req.content_type]],
             '/s/': [self.handle_static, [f'styles/{req.file_name}', req.content_type]],
@@ -81,11 +84,24 @@ class MyHttp(SimpleHTTPRequestHandler):
                 
         </form>
 
+        <form method="post" action="/empty">
+            <button type="submit" id="greet-button-id">CLEAR</button>
+                
+        </form>
+
         </body>
         </html>
         """
 
         self.respond(content)
+
+
+    def handle_empty(self, request:HttpRequest):
+        if request.method != "post":
+            raise MethodNotAllowed
+     
+        self.remove_user_data()
+        self.redirect("/hello/")    
 
 
     def handle_hello_update(self, request:HttpRequest):
@@ -145,7 +161,7 @@ class MyHttp(SimpleHTTPRequestHandler):
         if not USERS_DATA.is_file():
             return ""
 
-        with USERS_DATA.open("r") as src:
+        with NEW_USERS_DATA.open("r") as src:
             content = src.read()
 
         content = to_str(content)
@@ -154,8 +170,13 @@ class MyHttp(SimpleHTTPRequestHandler):
 
     @staticmethod
     def save_user_data(query: str) -> None:
-        with USERS_DATA.open("w") as dst:
-            dst.write(query)         
+        with NEW_USERS_DATA.open("w") as dst:
+            dst.write(query)        
+
+    @classmethod #
+    def remove_user_data(cls) -> None:
+        cls.save_user_data('')
+
 
 
 

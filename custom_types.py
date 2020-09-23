@@ -72,3 +72,5 @@ class User(NamedTuple):
             age = int(age)
 
         return User(name=name, age=age)
+
+
