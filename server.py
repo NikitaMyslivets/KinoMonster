@@ -4,7 +4,6 @@ from datetime import datetime
 from http.server import SimpleHTTPRequestHandler
 
 from consts import USERS_DATA
-from consts import NEW_USERS_DATA
 from custom_types import User
 from custom_types import HttpRequest
 from errors import MethodNotAllowed
@@ -24,8 +23,6 @@ class MyHttp(SimpleHTTPRequestHandler):
 
     def dispatch(self, http_method):
         req = HttpRequest.from_path(self.path, method=http_method)
-        #endpoint = Endpoint.from_path(self.path)
-        #content_type = get_content_type(endpoint.file_name)
 
         endpoints = {
 
@@ -161,7 +158,7 @@ class MyHttp(SimpleHTTPRequestHandler):
         if not USERS_DATA.is_file():
             return ""
 
-        with NEW_USERS_DATA.open("r") as src:
+        with USERS_DATA.open("r") as src:
             content = src.read()
 
         content = to_str(content)
@@ -170,7 +167,7 @@ class MyHttp(SimpleHTTPRequestHandler):
 
     @staticmethod
     def save_user_data(query: str) -> None:
-        with NEW_USERS_DATA.open("w") as dst:
+        with USERS_DATA.open("w") as dst:
             dst.write(query)        
 
     @classmethod #

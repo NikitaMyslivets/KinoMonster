@@ -43,4 +43,4 @@ def to_str(text: AnyStr) -> str:
     if isinstance(result, bytes):
         result = result.decode()
 
-    return result					    		
+    return result
