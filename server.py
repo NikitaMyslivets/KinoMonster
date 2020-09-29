@@ -24,6 +24,7 @@ class MyHttp(SimpleHTTPRequestHandler):
         endpoints = {
 
             '/': [self.handle_static, ['index.html', 'text/html']],
+            '/theme/': [self.handle_theme, [req]],
             '/hello/': [self.handle_hello, [req]],
             '/hello-update/': [self.handle_hello_update, [req]],
             "/hello-reset/": [self.handle_hello_reset, [req]],
@@ -46,16 +47,34 @@ class MyHttp(SimpleHTTPRequestHandler):
         except errors.MethodNotAllowed:
             self.handle_405()
         except Exception:
-            self.handle_500()        
+            self.handle_500()
+
+
+    def handle_theme(self, request: custom_types.HttpRequest) -> None:
+        if request.method != 'post':
+            raise errors.MethodNotAllowed
+
+        response_kwargs = {}
+        session = request.session
+        if not session:
+            session = utils.generate_new_session()
+            response_kwargs['session'] = session
+
+        current_theme = utils.load_theme(session)
+        new_theme = utils.switch_theme(current_theme)
+        utils.store_theme(session, new_theme)
+
+        self.redirect('/hello', **response_kwargs)
+
 
     def handle_hello(self, request: custom_types.HttpRequest) -> None:
         if request.method != "get":
             raise errors.MethodNotAllowed
 
-        user_data = utils.load_user_data(request.session)
-        user = custom_types.User.build(user_data)
+        profile = utils.load_profile(request.session)
+        user = custom_types.User.build(profile)
 
-        content = self.render_hello_page(user, user)
+        content = self.render_hello_page(request, user, user)
 
         self.respond(content)
 
@@ -73,24 +92,27 @@ class MyHttp(SimpleHTTPRequestHandler):
             response_kwargs["session"] = session
 
         if new_user.errors:
-            saved_data = utils.load_user_data(session)
+            saved_data = utils.load_profile(session)
             saved_user = custom_types.User.build(saved_data)
-            html = self.render_hello_page(new_user, saved_user)
+            html = self.render_hello_page(request, new_user, saved_user)
             self.respond(html, **response_kwargs)
         else:
-            utils.store_user_data(session, form_data)
+            utils.store_profile(session, form_data)
             self.redirect("/hello", **response_kwargs)
 
     def handle_hello_reset(self, request: custom_types.HttpRequest) -> None:
         if request.method != 'post':
             raise errors.MethodNotAllowed
 
-        utils.drop_user_data(request.session)
-        self.redirect('/hello/', session='')
+        utils.drop_profile(request.session)
+        self.redirect('/hello/')
 
     def render_hello_page(
-        self, new_user: custom_types.User, saved_user: custom_types.User
-    ) -> str:
+        self,
+        request: custom_types.HttpRequest,
+        new_user: custom_types.User,
+        saved_user: custom_types.User,
+            ) -> str:
         css_class_for_name = css_class_for_age = ""
         label_for_name = "Your name: "
         label_for_age = "Your age: "
@@ -114,6 +136,8 @@ class MyHttp(SimpleHTTPRequestHandler):
             name_new = new_user.name
             age_new = new_user.age
 
+        theme = utils.load_theme(request.session)
+
         html = utils.read_static("hello.html").decode()
         template = Template(html)
 
@@ -127,6 +151,7 @@ class MyHttp(SimpleHTTPRequestHandler):
             "class_for_name": css_class_for_name,
             "year": year,
             "fdsfdsfds": 2354234532,
+            'theme': theme,
         }
 
         content = template.render(**context)
@@ -170,9 +195,9 @@ class MyHttp(SimpleHTTPRequestHandler):
             return
 
         if session:
-            header = utils.build_session_headers(session)
+            header = utils.build_session_header(session)
         else:
-            header = utils.build_session_headers('expires', expires=True)
+            header = utils.build_session_header('expires', expires=True)
 
         self.send_header('Set-Cookie', header)
 
