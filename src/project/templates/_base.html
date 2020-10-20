@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>KinoMonster {% block title %}{% endblock %}</title>
+	<meta name="description" content="Киномонстр - это портал о кино">
+	<meta name="keywords" content="фильмы, фильмы онлайн, hd">
+	<link rel="stylesheet" type="text/css" href="/s/style.css">
+</head>
+<body>
+
+<div class="main">
+
+	<div class="header">
+			<div class="logo">
+				<div class="logo_text">
+					<h1><a href="{% url 'home:index' %}">КиноМонстр</a></h1>
+					<h2>Кино - наша страсть!</h2>
+				</div>
+
+			</div>
+
+			<div class="menubar">
+
+				<ul class="menu">
+					<li class="selected"><a href="/">Главная</a></li>
+					<li><a href="/films">Фильмы</a></li>
+					<li><form method="post" action="theme/">
+								<button type="submit">Switch theme</button>
+								{% csrf_token %}
+						</form></li>
+					<li><a href="/rating">Рейтинг фильмов</a></li>
+					<li><a href="/contact">Контакты</a></li>
+					<li><a href="{% url 'hello:index' %}">hello.app</a></li>
+
+				</ul>
+
+
+			</div>
+	</div>
+
+	<div class="site_content">
+
+		<div class="sidebar_container">
+
+			<div class="sidebar">
+
+				<h2>Поиск</h2>
+				<form method="post" action="#" id="search_form">
+					<input type="search" name="search_field" placeholder="ваш запрос">
+					<input type="submit" class="btn" value="найти">
+
+				</form>
+
+
+			</div>
+
+				<div class="sidebar">
+					<h2>Вход</h2>
+					<form method="post" action="#" id="login">
+						<input type="text" name="ligin_field" placeholder="логин">
+						<input type="password" name="password_field" placeholder="пороль">
+						<input type="submit" class="btn" value="вход">
+						<div class="lables_passreg-text">
+							<span><a href="#">забыли пороль?</a></span> | <span><a href="#">регистрация</a></span>
+						</div>
+
+					</form>
+				</div>
+			<div class="sidebar">
+				<h2>Новости</h2>
+				<span>31.03.2018</span>
+				<p>Мы запустили расширенный поиск</p>
+				<a href="#">читать</a>
+			</div>
+
+			<div class="sidebar">
+				<h2>Рейтинг фильмов</h2>
+				<ul>
+					<li><a href="/show">Интерстеллар</a><span class="rating_sidebar">8.1</span></li>
+					<li><a href="#">Матрица</a><span class="rating_sidebar">8</span></li>
+					<li><a href="#">Безумный Макс</a><span class="rating_sidebar">7.8</span></li>
+					<li><a href="#">Облачный атлас</a><span class="rating_sidebar">7.4</span></li>
+				</ul>
+			</div>
+
+		</div>
+
+		{% block main %}{% endblock %}
+
+
+				<div class="posts">
+				<hr>
+				<h2><a href="#">Как снимали Инетерстеллар</a></h2>
+				<div class="posts_content">
+					<p>
+						45 лет исполнилось Кристоферу Нолану — одному из самых успешных режиссеров нашего времени, чьи работы одинаково любимы как взыскательными критиками, так и простыми зрителями. Фильмом изначально занималась студия Paramount. Когда Кристофер Нолан занял место режиссера, студия Warner Bros., которая выпускала его последние фильмы, добилась участия в проекте.
+					</p>
+				</div>
+					<p><a href="#">читать</a></p>
+					<hr>
+					<h2><a href="#">Актер Том Хенкс поделился впечатлением о фестивале</a></h2>
+
+					<div class="posts_content">
+						<p>
+							16 февраля в Лондоне состоялась 67-я церемония вручения наград Британской киноакадемии. Леонардо ДиКаприо, Брэд Питт, Анджелина Джоли, Кейт Бланшетт, Хелен Миррен, Эми Адамс, Кристиан Бэйл, Альфонсо Куарон и другие гости и победители премии — в нашем репортаже.
+						</p>
+					</div>
+					<p><a href="#">читать</a></p>
+
+				</div>
+
+
+		</div>
+
+	</div>
+
+	<div class="footer">
+		<p>
+			<a href="/">Главная</a> |
+			<a href="/films">Фильмы</a> |
+			<a href="#">Сериалы</a> |
+			<a href="/rating">Рейтинг фильмов</a> |
+			<a href="/contact">Контакты</a> |
+		</p>
+		<p>my-nk.com 2018</p>
+	</div>
+</div>
+
+</body>
+</html>

@@ -4,13 +4,20 @@ from django.contrib import admin
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.urls import path
+from django.urls import include
+
+
 
 
 def view_index(request: HttpRequest):
-    index_html = Path(__file__).parent.parent.parent.parent / "static" / "index.html"
+    index_html = Path(__file__).parent.parent.parent / "static" / "index.html"
     with index_html.open(encoding='utf-8') as fp:
         content = fp.read()
-    return HttpResponse(content, content_type="text/html")
+    resp = HttpResponse(content, content_type="text/html", status=200)
+
+    print(request)
+
+    return resp
 
 
 def view_logo(request: HttpRequest):
@@ -28,8 +35,11 @@ def view_css(request: HttpRequest):
 
 
 urlpatterns = [
-    path("", view_index),
+    path("", include('applications.home.urls')),
     path("admin/", admin.site.urls),
     path("i/cloud.png", view_logo),
     path("s/style.css", view_css),
+    path("hello/", include('applications.hello.urls')),
+
+
 ]

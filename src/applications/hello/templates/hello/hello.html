@@ -1,0 +1,28 @@
+{% extends "_base.html" %}
+{% load static %}
+
+
+{% block title %}Hello page{% endblock %}
+
+{% block main %}
+
+    <hr>
+    <h1>Hello {{ name_saved|default:"anonymous" }}!</h1>
+    {% if year %}
+        <h1>You was born at {{ year }}!</h1>
+    {% endif %}
+
+    <div class="form-container">
+        <form action="{% url 'hello:update' %}" method="post">
+            {{ form.as_p }}
+                <button id="greet-button-id" style="grid-area: gi-submit" type="submit">Greet</button>
+     {% csrf_token %}
+        </form>
+    </div>
+    <div class="form-container">
+        <form action="{% url 'hello:reset' %}" method="post">
+            <button id="reset-button-id" style="width: 60%" type="submit">Reset</button>
+            {% csrf_token %}
+        </form>
+    </div>
+{% endblock %}

@@ -10,12 +10,15 @@ pytest-selenium = "*"
 astpretty = "*"
 pudb = "*"
 isort = "*"
-black = "*"
+black = "==20.8b1"
 
 [packages]
 django = "*"
 jinja2 = "*"
 delorean = "*"
+dynaconf = {extras = ["yaml"], version = "*"}
+dj-database-url = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.7"
