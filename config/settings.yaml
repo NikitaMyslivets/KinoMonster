@@ -16,6 +16,7 @@ default:
     - src/applications/home/templates
   PROJECT_NAME: ""
   SECRET_KEY: ""
+  SENRTY_DSN: ""
   TEMPLATE_ENGINE: "Django"
   VENV_SYNTHETIC: false
 
@@ -28,7 +29,7 @@ development:
 
 heroku:
   ALLOWED_HOSTS:
-    - "tms-project-my.herokuapp.com"
+    - "kino-monster.herokuapp.com"
   VENV_SYNTHETIC: true
 
 

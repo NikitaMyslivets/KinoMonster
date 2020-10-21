@@ -33,6 +33,9 @@ def view_css(request: HttpRequest):
         content = fp.read()
     return HttpResponse(content, content_type="text/css")
 
+def trigger_error(request):
+    devision_by_zero = 1 / 0
+
 
 urlpatterns = [
     path("", include('applications.home.urls')),
@@ -40,6 +43,6 @@ urlpatterns = [
     path("i/cloud.png", view_logo),
     path("s/style.css", view_css),
     path("hello/", include('applications.hello.urls')),
-
+    path('sentry-debug/', trigger_error),
 
 ]
