@@ -19,6 +19,7 @@ delorean = "*"
 dynaconf = {extras = ["yaml"], version = "*"}
 dj-database-url = "*"
 psycopg2-binary = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

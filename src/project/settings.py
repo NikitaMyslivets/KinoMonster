@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from dynaconf import settings as _ds
 import dj_database_url
@@ -6,7 +7,7 @@ REPO_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = REPO_DIR / "src"
 PROJECT_DIR = BASE_DIR / "project"
 
-SECRET_KEY = _ds.SEKRET_KEY
+SECRET_KEY = _ds.SECRET_KEY
 
 DEBUG = _ds.DEBUG
 
@@ -56,12 +57,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+database_url = os.getenv('DATABASE_URL', _ds.DATABASE_URL)
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(database_url),
+
 }
 
 
