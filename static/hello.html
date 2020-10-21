@@ -49,7 +49,7 @@ body {
     <title>Document</title>
 </head>
 <body>
-    <form method="post" action="/theme">
+    <form method="post" action="/theme" {% csrf_token %}>
         <button type="submit">Switch theme</button>
     </form>
     <hr>

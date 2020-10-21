@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Main page{% endblock title %}
+
+{% block main %}
+	<div class="content">
+
+			<h1>Новые фильмы</h1>
+
+				<div class="films_block">
+
+				<a href="#"><img src="{% static 'images/matrix.png' %}" alt=""></a>
+				<a href="#"><img src="{% static 'images/max.png' %}" alt=""></a>
+				<a href="/show"><img src="{% static 'images/inter.png' %}" alt=""></a>
+				<a href="#"><img src="{% static 'images/cloud.png' %}" alt=""></a>
+
+				</div>
+
+			<h1>Новые сериалы</h1>
+				<div class="films_block">
+
+				<a href="#"><img src="{% static 'images/dead.png' %}" alt=""></a>
+				<a href="#"><img src="{% static 'images/silicon.png' %}" alt=""></a>
+				<a href="#"><img src="{% static 'images/breakingbad.png' %}" alt=""></a>
+				<a href="#"><img src="{% static 'images/xfiles.png' %}" alt=""></a>
+
+				</div>
+
+
+		</div>
+{% endblock main %}
