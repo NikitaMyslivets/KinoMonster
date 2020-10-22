@@ -4,10 +4,10 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>KinoMonster {% block title %}{% endblock %}</title>
+	<title>KinoMonster</title>
 	<meta name="description" content="Киномонстр - это портал о кино">
 	<meta name="keywords" content="фильмы, фильмы онлайн, hd">
-	<link rel="stylesheet" type="text/css" href="/s/style.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'styles/style.css' %}">
 </head>
 <body>
 
@@ -30,9 +30,10 @@
 					<li><form method="post" action="theme/">
 								<button type="submit">Switch theme</button>
 								{% csrf_token %}
-						</form></li>
+						</form>
+					</li>
 					<li><a href="/rating">Рейтинг фильмов</a></li>
-					<li><a href="/contact">Контакты</a></li>
+					<li><a href="{% url 'contacts:index' %}">Контакты</a></li>
 					<li><a href="{% url 'hello:index' %}">hello.app</a></li>
 
 				</ul>
@@ -88,42 +89,17 @@
 
 		</div>
 
-		{% block main %}{% endblock %}
-
-
-				<div class="posts">
-				<hr>
-				<h2><a href="#">Как снимали Инетерстеллар</a></h2>
-				<div class="posts_content">
-					<p>
-						45 лет исполнилось Кристоферу Нолану — одному из самых успешных режиссеров нашего времени, чьи работы одинаково любимы как взыскательными критиками, так и простыми зрителями. Фильмом изначально занималась студия Paramount. Когда Кристофер Нолан занял место режиссера, студия Warner Bros., которая выпускала его последние фильмы, добилась участия в проекте.
-					</p>
-				</div>
-					<p><a href="#">читать</a></p>
-					<hr>
-					<h2><a href="#">Актер Том Хенкс поделился впечатлением о фестивале</a></h2>
-
-					<div class="posts_content">
-						<p>
-							16 февраля в Лондоне состоялась 67-я церемония вручения наград Британской киноакадемии. Леонардо ДиКаприо, Брэд Питт, Анджелина Джоли, Кейт Бланшетт, Хелен Миррен, Эми Адамс, Кристиан Бэйл, Альфонсо Куарон и другие гости и победители премии — в нашем репортаже.
-						</p>
-					</div>
-					<p><a href="#">читать</a></p>
-
-				</div>
-
-
-		</div>
+		{% block main %}{% endblock main %}
 
 	</div>
 
 	<div class="footer">
 		<p>
-			<a href="/">Главная</a> |
+			<a href="{% url 'home:index' %}">Главная</a> |
 			<a href="/films">Фильмы</a> |
 			<a href="#">Сериалы</a> |
 			<a href="/rating">Рейтинг фильмов</a> |
-			<a href="/contact">Контакты</a> |
+			<a href="{% url 'contacts:index' %}">Контакты</a> |
 		</p>
 		<p>my-nk.com 2018</p>
 	</div>

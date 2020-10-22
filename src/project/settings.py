@@ -33,8 +33,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # my app --------------------
     'applications.hello.apps.HelloConfig',
     'applications.home.apps.HomeConfig',
+    'applications.contacts.apps.ContactsConfig',
+    'applications.films.apps.FilmsConfig',
+    'applications.rating.apps.RatingConfig',
 ]
 
 MIDDLEWARE = [
