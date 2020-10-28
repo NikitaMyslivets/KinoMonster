@@ -1,0 +1,10 @@
+{% extends '_base.html' %}
+
+{% load static %}
+
+{% block main %}
+	<h1>Blog</h1>
+	{% for obj in object_list %}
+		<p>{{ obj.title }}</p>
+	{% endfor %}
+{% endblock main %}

@@ -21,8 +21,6 @@ PROJECT_DIR = BASE_DIR / "project"
 
 SECRET_KEY = _ds.SECRET_KEY
 
-
-
 ALLOWED_HOSTS = _ds.ALLOWED_HOSTS + ['localhost', '127.0.0.1']
 
 
@@ -39,6 +37,7 @@ INSTALLED_APPS = [
     'applications.contacts.apps.ContactsConfig',
     'applications.films.apps.FilmsConfig',
     'applications.rating.apps.RatingConfig',
+    'applications.blog.apps.BlogConfig',
 ]
 
 MIDDLEWARE = [

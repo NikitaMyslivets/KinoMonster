@@ -14,6 +14,7 @@ urlpatterns = [
     path('contact/', include('applications.contacts.urls')),
     path('films/', include('applications.films.urls')),
     path('rating/', include('applications.rating.urls')),
+    path('blog/', include('applications.blog.urls')),
 
     path('sentry-debug/', trigger_error),
 
