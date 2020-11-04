@@ -1,13 +1,9 @@
-from django.views.generic import TemplateView
+from django.views.generic import ListView
 
 from applications.blog.models import Post
 
 
-class BlogView(TemplateView):
+class BlogView(ListView):
     template_name = 'blog/blog.html'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['object_list'] = Post.objects.filter(visible=True)
-        return ctx
+    model = Post
+    queryset = Post.objects.filter(visible=True)
