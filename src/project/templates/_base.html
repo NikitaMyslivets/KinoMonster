@@ -27,14 +27,15 @@
 				<ul class="menu">
 					<li class="selected"><a href="/">Главная</a></li>
 					<li><a href="/films">Фильмы</a></li>
-					<li><form method="post" action="theme/">
+					<!--<li><form method="post" action="theme/">
 								<button type="submit">Switch theme</button>
 								{% csrf_token %}
 						</form>
-					</li>
+					</li>-->
 					<li><a href="/rating">Рейтинг фильмов</a></li>
 					<li><a href="{% url 'contacts:index' %}">Контакты</a></li>
 					<li><a href="{% url 'hello:index' %}">hello.app</a></li>
+					<li><a href="{% url 'blog:index' %}">blog.app</a></li>
 
 				</ul>
 
@@ -100,6 +101,8 @@
 			<a href="#">Сериалы</a> |
 			<a href="/rating">Рейтинг фильмов</a> |
 			<a href="{% url 'contacts:index' %}">Контакты</a> |
+			<a href="{% url 'hello:index' %}">hello.app</a> |
+			<a href="{% url 'blog:index' %}">blog.app</a> |
 		</p>
 		<p>my-nk.com 2018</p>
 	</div>

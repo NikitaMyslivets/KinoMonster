@@ -115,3 +115,10 @@ STATIC_ROOT = REPO_DIR / ".static"
 if not DEBUG:
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'nikinos.myslivets@gmail.com'
+EMAIL_HOST_PASSWORD = 'xxvuyedgnlomqfds'
+EMAIL_PORT = 587
+
+
